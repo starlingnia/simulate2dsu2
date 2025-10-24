@@ -49,8 +49,8 @@ tdumatrix multi(tdumatrix A, tdumatrix B) {
 }
 typedef struct  latticesitedof
 { 
-  int M = 4;
-  int N = 4;  
+  int M = 6;
+  int N = 6;  
   std::vector <tdumatrix > site;
   std::vector <tdumatrix> ssite;
   // 添加构造函数来初始化向量的大小
@@ -58,14 +58,14 @@ typedef struct  latticesitedof
   
  tdumatrix& operator()(int i, int j, int mu){ 
   if (mu ==0)
-  return site[i*4 + j];
+  return site[i*M + j];
   else
-  return ssite[i*4 + j]; }
+  return ssite[i*N + j]; }
 }dof;
 // 移除 randomdof 中的 push_back，直接使用索引赋值
 dof randomdof(double move) {
   dof lat; // 调用新的构造函数，site 和 ssite 已有 16 个元素
-  for (int i = 0; i < 16; ++i) {
+  for (int i = 0; i < 36; ++i) {
     // 使用索引而不是 push_back
     lat.site[i] = generate_tdu_matrix(move * dis(gen));
     lat.ssite[i] = generate_tdu_matrix(move * dis(gen));

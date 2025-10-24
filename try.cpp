@@ -33,8 +33,8 @@ for (int i = 0; i < steps; ++i) {
         }
         
         // 累加函数 g(x) = x^2 的值
-integral_sum = integral_sum + real(conj(lati(0,0,0).determinant()) *
-                                 conj(lati(3,0,1).determinant())*lati(3,3,0).determinant() * lati(0,3,1).determinant());;
+integral_sum = integral_sum + real(conj(lati(4,4,0).determinant()) *
+                                 conj(lati(3,4,1).determinant())*lati(3,3,0).determinant() * lati(4,3,1).determinant());;
 
         results.push_back(integral_sum / (i + 1.0));
     }
