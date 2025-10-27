@@ -1,22 +1,16 @@
 #include"generate.cpp"
 #include <iostream>
+#include <fstream>
 using namespace std;
 int main() {
-    tdumatrix u;
-   u = generate_tdu_matrix(0.24);
-   cout<< "Generated TDU Matrix:" << endl;
-   cout<< u(0,0) << " " << u(0,1) << endl;
-   cout<< u(1,0) << " " << u(1,1) << endl;
-    cout<< "Determinant: " << u.determinant() << endl;
-   cout<< "Determinant: " << u.determinant()*conj(u.determinant()) << endl;
-
   cout<< "input steps:" << endl;
   int steps;
   cin>> steps ;
   double movestep;
-  movestep = 0.334;
-    double integral_sum = 0.0; // 用于累加 g(x) 的值
-    std::vector<double> results; // 存储每一步的平均值
+  movestep = 0.544;
+   std::ofstream file("results.txt");
+   file << "step" << "\t" << "integral_value\n";
+  double wloop;
 
 dof lati = randomdof(dis(gen));
 for (int i = 0; i < steps; ++i) {
@@ -33,21 +27,12 @@ for (int i = 0; i < steps; ++i) {
         }
         
         // 累加函数 g(x) = x^2 的值
-integral_sum = integral_sum + real(conj(lati(4,4,0).determinant()) *
-                                 conj(lati(3,4,1).determinant())*lati(3,3,0).determinant() * lati(4,3,1).determinant());;
-
-        results.push_back(integral_sum / (i + 1.0));
+   wloop = real((lati(4,4,0).conj() * lati(3,4,1).conj()*lati(3,3,0).conj() * lati(4,3,1).conj()).trac());
+    file << i << "\t" << wloop<< "\t" << target_distribution(lati) << "\n";
+       
     }
-    cout<< results[steps-1]<< endl;
 
-
-
-
-
-
-
-
-
+    file.close();
 
 return 0;
 }

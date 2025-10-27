@@ -14,6 +14,13 @@ typedef struct randommatrix {
   std::vector<dcomplex> a;
   randommatrix( int n) : N(n), a(n * n, dcomplex(0.0, 0.0)) {}
   dcomplex& operator()(int i, int j){ return a[i*N + j]; }
+  dcomplex trac() {
+    dcomplex tr = dcomplex(0.0, 0.0);
+    for (int i = 0; i < N; ++i) {
+      tr += a[i * N + i];
+    }
+    return tr;
+  }
 } randommatrix;
 
 typedef struct tdumatrix: public randommatrix {
@@ -21,7 +28,23 @@ typedef struct tdumatrix: public randommatrix {
    std::complex<double> determinant() override {
     return a[0]*a[3] - a[1]*a[2];
   }
-}  tdumatrix;
+    tdumatrix conj() {
+    tdumatrix result;
+    result(0,0) = std::conj(a[0]);
+    result(0,1) = std::conj(a[2]);
+    result(1,0) = std::conj(a[1]);
+    result(1,1) = std::conj(a[3]);
+    return result; }
+    tdumatrix operator*(tdumatrix B) {
+      tdumatrix C;
+     C(0,0) = a[0]*B(0,0) + a[1]*B(1,0);
+     C(0,1) = a[0]*B(0,1) + a[1]*B(1,1);
+    C(1,0) = a[2]*B(0,0) + a[3]*B(1,0);
+     C(1,1) = a[2]*B(0,1) + a[3]*B(1,1);
+      return C;
+    } 
+
+} td;
 
 tdumatrix generate_tdu_matrix(double epsilon) {
   tdumatrix M;
@@ -101,7 +124,9 @@ double target_distribution(dof x){
      // x((i+1)%M, j, 1)
      // 假设 M 是行（垂直），N 是列（水平）
 
-     dete = dete + conj(x((i+1)%M,(j+1)%N,0).determinant())*conj(x(i,(j+1)%N,1).determinant())* x(i,j,0).determinant() * x((i+1)%M,j,1).determinant();
+     dete = dete + multi(multi(x((i+1)%M,(j+1)%N,0).conj(), x(i,(j+1)%N,1).conj()), multi(x(i,j,0), x((i+1)%M,j,1))).trac();
+   
+   
     }
   }
   return exp(-0.5 * real(dete)) / sqrt(2 * M_PI);
